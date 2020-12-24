@@ -1,0 +1,1 @@
+asar pack 3MDCLogger 3MDCLogger.asar
