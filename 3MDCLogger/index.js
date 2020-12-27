@@ -197,7 +197,6 @@ module.exports = {
       try {//Handle out of order processing
 		  for (var wizard in wizardBattles){
 			for (var k = wizardBattles[wizard].sendBattles.length - 1;k>=0;k--){
-			  //TODO: Handle multiple accounts with GW and Siege going at the same time. match battlekey and wizard. then do battles 1 and 2 and delete from the mon list.
 			  if (wizardBattles[wizard].sendBattles[k].battleKey == req['battle_key']){
 				  wizardBattles[wizard].sendBattles[k].win_lose = req['win_lose_list'][j];
 				  wizardBattles[wizard].sendBattles[k].battleDateTime = resp.tvalue - j;
