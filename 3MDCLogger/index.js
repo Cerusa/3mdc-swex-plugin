@@ -11,9 +11,10 @@ var sendBattles = [];
 sendBattles =
 {
     "wizard_id": 0,
+	"wizard_name":"",
     "battleType": "",
+	"battleKey":0,
 	"command":"",
-	"guildwar_match_info.guild_rating_id":0, "match_info.rating_id" for siege
     "battleDateTime": 0,
     "defense": {
         "units": [
@@ -29,7 +30,8 @@ sendBattles =
             0
         ]
     },
-    "win_lose": 1
+    "win_lose": 1,
+	"battleRank":0
 };
 */
 module.exports = {
@@ -78,14 +80,12 @@ module.exports = {
 			for (var k = wizardBattles.length - 1;k>=0;k--){
 				if(wizardBattles[k].wizard_id==req['wizard_id']) {
 					//update rating id
-					proxy.log({ type: 'debug', source: 'plugin', name: this.pluginName, message: `Wizard Somehowfound ${k}` });
 					wizardBattles[k].guild_rating_id = resp['guildwar_match_info']['guild_rating_id'];
 					wizardBattles[k].sendBattles = [];
 					wizardFound = true;
 				}
 			}
 			if(!wizardFound) {
-				proxy.log({ type: 'debug', source: 'plugin', name: this.pluginName, message: `Wizard Not Found ${resp['command']}` });
 				wizardInfo.wizard_id = req['wizard_id'];
 				wizardInfo.guild_rating_id = resp['guildwar_match_info']['guild_rating_id'];
 				wizardInfo.sendBattles = [];
@@ -147,7 +147,7 @@ module.exports = {
 			  for (var k = wizardBattles.length - 1;k>=0;k--){
 				if(wizardBattles[k].wizard_id==req['wizard_id']) {
 					//store battle in array
-					battle.rating_id = wizardBattles[k].guild_rating_id;
+					battle.battleRank = wizardBattles[k].guild_rating_id;
 					wizardBattles[k].sendBattles.push(battle);
 					}
 				}
@@ -184,7 +184,7 @@ module.exports = {
 			  for (var k = wizardBattles.length - 1;k>=0;k--){
 				if(wizardBattles[k].wizard_id==req['wizard_id']) {
 					//store battle in array
-					battle.rating_id = wizardBattles[k].siege_rating_id;
+					battle.battleRank = wizardBattles[k].siege_rating_id;
 					wizardBattles[k].sendBattles.push(battle);
 					}
 				}
@@ -205,7 +205,6 @@ module.exports = {
 				  sendResp = wizardBattles[wizard].sendBattles[k];
 				  //remove battle from the sendBattlesList
 				  wizardBattles[wizard].sendBattles.splice(k,1);
-					  //delete sendBattles[k];
 				  //if result then add time and win/loss then send to webservice
 				  if (sendResp.defense.units.length == 3 && sendResp.counter.units.length == 3) {
 					this.writeToFile(proxy, req, sendResp);
@@ -216,7 +215,9 @@ module.exports = {
 			  }
 			}
 		  }
-      } catch (e) {}
+      } catch (e) {
+		  proxy.log({ type: 'debug', source: 'plugin', name: this.pluginName, message: `GW Battle End Error ${e.message}` });
+	  }
 		  if(j==1){
 		  j=0;
 		  }
@@ -235,7 +236,6 @@ module.exports = {
 				  sendResp = wizardBattles[wizard].sendBattles[k];
 				  //remove battle from the sendBattlesList
 				  wizardBattles[wizard].sendBattles.splice(k,1);
-				  //delete sendBattles[k];
 				  //if 3 mons in offense and defense then send to webservice
 				  if (sendResp.defense.units.length == 3 && sendResp.counter.units.length == 3) {
 					this.writeToFile(proxy, req, sendResp);
