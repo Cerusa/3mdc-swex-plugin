@@ -14,3 +14,9 @@ can be found here: [Swex files path](https://i.imgur.com/V52VLlg.png)
 
 ## Requirements
 - SWEX Ver 0.0.25 and up (latest prefered)
+
+## Special Notes
+- Only G1, G1 and G3 battles are currently logged and stored.
+- This plugin ONLY updates the "public" 3MDC site.
+- All defenses and counters are still subject to approval.
+- Only 3 monster defenses and 3 monster offenses are permitted.
