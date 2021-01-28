@@ -193,14 +193,14 @@ module.exports = {
 			}
     }
 	  if(req['command'] == 'BattleGuildWarResult'){
-		  var j = 0;
+		  var j = 1;
       try {//Handle out of order processing
 		  for (var wizard in wizardBattles){
 			for (var k = wizardBattles[wizard].sendBattles.length - 1;k>=0;k--){
 			  if (wizardBattles[wizard].sendBattles[k].battleKey == req['battle_key']){
 				  wizardBattles[wizard].sendBattles[k].win_lose = req['win_lose_list'][j];
 				  wizardBattles[wizard].sendBattles[k].battleDateTime = resp.tvalue - j;
-				  j++;
+				  j--;
 				  sendResp = wizardBattles[wizard].sendBattles[k];
 				  //remove battle from the sendBattlesList
 				  wizardBattles[wizard].sendBattles.splice(k,1);
