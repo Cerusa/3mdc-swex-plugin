@@ -1,7 +1,7 @@
 {
   "name": "3mdc-logger",
   "version": "1.0.0",
-  "description": "Extract guild war information for use in 3DMC",
+  "description": "Automatically upload GW and Siege attacks and log defense+counter win/loss.",
   "main": "index.js",
   "dependencies": {
     "asar": "^2.0.1",
