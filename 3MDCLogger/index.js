@@ -193,19 +193,19 @@ module.exports = {
 			}
     }
 	  if(req['command'] == 'BattleGuildWarResult'){
-		  var j = 0;
+		  var j = 1;
       try {//Handle out of order processing
 		  for (var wizard in wizardBattles){
 			for (var k = wizardBattles[wizard].sendBattles.length - 1;k>=0;k--){
 			  if (wizardBattles[wizard].sendBattles[k].battleKey == req['battle_key']){
 				  wizardBattles[wizard].sendBattles[k].win_lose = req['win_lose_list'][j];
 				  wizardBattles[wizard].sendBattles[k].battleDateTime = resp.tvalue - j;
-				  j++;
+				  j--;
 				  sendResp = wizardBattles[wizard].sendBattles[k];
 				  //remove battle from the sendBattlesList
 				  wizardBattles[wizard].sendBattles.splice(k,1);
 				  //if result then add time and win/loss then send to webservice
-				  if (sendResp.defense.units.length == 3 && sendResp.counter.units.length == 3) {
+				  if (sendResp.defense.units.length == 3 && sendResp.counter.units.length == 3 && sendResp.battleRank >= 4000) {
 					this.writeToFile(proxy, req, sendResp);
 					
 					this.uploadToWebService(proxy, config, req, sendResp);
@@ -236,7 +236,7 @@ module.exports = {
 				  //remove battle from the sendBattlesList
 				  wizardBattles[wizard].sendBattles.splice(k,1);
 				  //if 3 mons in offense and defense then send to webservice
-				  if (sendResp.defense.units.length == 3 && sendResp.counter.units.length == 3) {
+				  if (sendResp.defense.units.length == 3 && sendResp.counter.units.length == 3 && sendResp.battleRank >= 4000) {
 					this.writeToFile(proxy, req, sendResp);
 					
 					this.uploadToWebService(proxy, config, req, sendResp);
