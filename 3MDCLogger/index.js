@@ -37,13 +37,17 @@ sendBattles =
 module.exports = {
   defaultConfig: {
     enabled: true,
-    saveToFile: false
+    saveToFile: false,
+	logGuildWar: true,
+	logSiegeBattle: false
   },
   defaultConfigDetails: {
-    saveToFile: {label: 'Save to file as well?'}
+    saveToFile: {label: 'Save to file as well?'},
+	logGuildWar: {label: 'Log Guild War Battles to Public 3MDC'},
+	logSiegeBattle: {label: 'Log Siege Battles to Public 3MDC'}
   },
   pluginName,
-  pluginDescription: 'Automatically upload GW and Siege attacks and log defense+counter win/loss. ',
+  pluginDescription: 'Automatically upload GW and Siege attacks and log defense+counter win/loss to public 3MDC. ',
   init(proxy, config) {
     cache={};
 
@@ -192,7 +196,7 @@ module.exports = {
 				proxy.log({ type: 'debug', source: 'plugin', name: this.pluginName, message: `${resp['command']}-${e.message}` });
 			}
     }
-	  if(req['command'] == 'BattleGuildWarResult'){
+	  if(req['command'] == 'BattleGuildWarResult' && logGuildWar){
 		  var j = 1;
       try {//Handle out of order processing
 		  for (var wizard in wizardBattles){
@@ -222,7 +226,7 @@ module.exports = {
 		  }
     }
     
-	  if( req['command'] == 'BattleGuildSiegeResult'){
+	  if( req['command'] == 'BattleGuildSiegeResult' && logSiegeBattle){
 		  var j = 0;
       try {//Handle out of order processing
 		  for (var wizard in wizardBattles){
