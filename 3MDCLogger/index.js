@@ -2,6 +2,7 @@ const request = require('request');
 const fs = require('fs');
 const path = require('path');
 const pluginName = '3DMCLogger';
+const pluginVersion = '2021-01-27_2136';
 var wizardBattles = [];
 var sendBattles = [];
 
@@ -37,13 +38,18 @@ sendBattles =
 module.exports = {
   defaultConfig: {
     enabled: true,
-    saveToFile: false
+    saveToFile: false,
+	logGuildWar: true,
+	logSiegeBattle: false
   },
   defaultConfigDetails: {
-    saveToFile: {label: 'Save to file as well?'}
+    saveToFile: {label: 'Save to file as well?'},
+	logGuildWar: {label: 'Log Guild War Battles to Public 3MDC'},
+	logSiegeBattle: {label: 'Log Siege Battles to Public 3MDC'}
+	
   },
   pluginName,
-  pluginDescription: 'Automatically upload GW and Siege attacks and log defense+counter win/loss. ',
+  pluginDescription: 'Automatically upload GW and Siege attacks and log defense+counter win/loss to public 3MDC. ',
   init(proxy, config) {
     cache={};
 
@@ -66,6 +72,7 @@ module.exports = {
           this.processRequest(command,proxy,config,req,resp,cache);
         });
     }
+	this.checkVersion(proxy);
   },
   hasAPISettings(config){
     if (!config.Config.Plugins[pluginName].enabled) return false;
@@ -192,7 +199,7 @@ module.exports = {
 				proxy.log({ type: 'debug', source: 'plugin', name: this.pluginName, message: `${resp['command']}-${e.message}` });
 			}
     }
-	  if(req['command'] == 'BattleGuildWarResult'){
+	  if(req['command'] == 'BattleGuildWarResult' && logGuildWar){
 		  var j = 1;
       try {//Handle out of order processing
 		  for (var wizard in wizardBattles){
@@ -222,7 +229,7 @@ module.exports = {
 		  }
     }
     
-	  if( req['command'] == 'BattleGuildSiegeResult'){
+	  if( req['command'] == 'BattleGuildSiegeResult' && logSiegeBattle){
 		  var j = 0;
       try {//Handle out of order processing
 		  for (var wizard in wizardBattles){
@@ -278,6 +285,42 @@ module.exports = {
           source: 'plugin',
           name: this.pluginName,
           message: `Upload failed: Server responded with code: ${response.statusCode} = ${response.body}`
+        });
+      }
+    });
+  },
+  checkVersion(proxy){
+	  //check version number
+	  var endpoint = "https://swgt.io/api/3mdc/v1";
+	  let options = {
+      method: 'get',
+      uri: endpoint
+    };
+	request(options, (error, response) => {
+      if (error) {
+        proxy.log({ type: 'error', source: 'plugin', name: this.pluginName, message: `Error: ${error.message}` });
+        return;
+      }
+	//Check current version of SWGT Plugin as listed on site.
+	//proxy.log({type:'success',source:'plugin',name:this.pluginName,message:`Site Version: ${response.body.message}, Plugin Version: ${pluginVersion}`});
+      if (response.statusCode === 200) {
+		//Check current version of SWGT Plugin as listed on site.
+		versionResponse = JSON.parse(response.body);
+		if (versionResponse.message == pluginVersion) {
+			proxy.log({type:'success',source:'plugin',name:this.pluginName,
+			message:`Initializing version ${pluginName}_${pluginVersion}. You have the latest version!`});
+		} else {
+			proxy.log({type:'warning',source:'plugin',name:this.pluginName,
+			message:`Initializing version ${pluginName}_${pluginVersion}. There is a new version available on GitHub. Please visit https://github.com/Cerusa/3mdc-swex-plugin/releases/latest and download the latest version ${versionResponse.message}.`});
+		};
+		//proxy.log({type:'success',source:'plugin',name:this.pluginName,message:`Site Version: ${versionResponse.message}, Plugin Version: ${pluginVersion}`});
+
+      } else {
+        proxy.log({
+          type: 'error',
+          source: 'plugin',
+          name: this.pluginName,
+          message: `Error checking version. ${response.body}`
         });
       }
     });
