@@ -2,7 +2,7 @@ const request = require('request');
 const fs = require('fs');
 const path = require('path');
 const pluginName = '3DMCLogger';
-const pluginVersion = '2021-04-02_1626';
+const pluginVersion = '2021-04-02_2038';
 var wizardBattles = [];
 var sendBattles = [];
 
