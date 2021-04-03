@@ -199,7 +199,7 @@ module.exports = {
 				proxy.log({ type: 'debug', source: 'plugin', name: this.pluginName, message: `${resp['command']}-${e.message}` });
 			}
     }
-	  if(req['command'] == 'BattleGuildWarResult' && logGuildWar){
+	  if(req['command'] == 'BattleGuildWarResult' && config.Config.Plugins[pluginName].logGuildWar){
 		  var j = 1;
       try {//Handle out of order processing
 		  for (var wizard in wizardBattles){
@@ -229,7 +229,7 @@ module.exports = {
 		  }
     }
     
-	  if( req['command'] == 'BattleGuildSiegeResult' && logSiegeBattle){
+	  if( req['command'] == 'BattleGuildSiegeResult' && config.Config.Plugins[pluginName].logSiegeBattle){
 		  var j = 0;
       try {//Handle out of order processing
 		  for (var wizard in wizardBattles){
